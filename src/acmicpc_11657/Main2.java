@@ -2,10 +2,9 @@
 //
 //import java.io.BufferedReader;
 //import java.io.InputStreamReader;
-//import java.util.ArrayList;
 //import java.util.StringTokenizer;
 //
-//public class Main_version_002 {
+//public class Main2 {
 //	static int distance[];
 //
 //	public static void main(String[] args) throws Exception {
@@ -14,16 +13,13 @@
 //		int N = Integer.parseInt(st.nextToken());
 //		int M = Integer.parseInt(st.nextToken());
 //
-//		ArrayList<Edge> edges[] = new ArrayList[N + 1];
-//		for (int i = 1; i <= N; i++) {
-//			edges[i] = new ArrayList<Edge>();
-//		}
+//		Edge edges[] = new Edge[M];
 //		for (int i = 0; i < M; i++) {
 //			st = new StringTokenizer(br.readLine());
 //			int start = Integer.parseInt(st.nextToken());
 //			int end = Integer.parseInt(st.nextToken());
 //			int weight = Integer.parseInt(st.nextToken());
-//			edges[start].add(new Edge(start, end, weight));
+//			edges[i] = new Edge(start, end, weight);
 //		}
 //
 //		distance = new int[N + 1];
@@ -33,20 +29,18 @@
 //		}
 //
 //		boolean updated = false;
-//		for(int k = 0; k < N; k++) {
+//		for (int k = 0; k < N; k++) {
 //			updated = false;
-//			for (int i = 1; i <= N; i++) {
-//				for (int j = 0; j < edges[i].size(); j++) {
-//					if (distance[i] != Integer.MAX_VALUE) {
-//						int currentDistance = distance[i] + edges[i].get(j).weight;
-//						if (distance[edges[i].get(j).end] > currentDistance) {
-//							distance[edges[i].get(j).end] = currentDistance;
-//							updated = true;
-//						}
+//			for (int i = 0; i < M; i++) {
+//				if (distance[edges[i].start] != Integer.MAX_VALUE) {
+//					int currentDistance = distance[edges[i].start] + edges[i].weight;
+//					if (distance[edges[i].end] > currentDistance) {
+//						distance[edges[i].end] = currentDistance;
+//						updated = true;
 //					}
 //				}
 //			}
-//			if(!updated) break;
+//			if (!updated) break;
 //		}
 //
 //		int result;
@@ -66,14 +60,14 @@
 //	}
 //}
 //
-////class Edge {
-////	int start;
-////	int end;
-////	int weight;
-////
-////	public Edge(int start, int end, int weight) {
-////		this.start = start;
-////		this.end = end;
-////		this.weight = weight;
-////	}
-////}
+//class Edge {
+//	int start;
+//	int end;
+//	int weight;
+//
+//	public Edge(int start, int end, int weight) {
+//		this.start = start;
+//		this.end = end;
+//		this.weight = weight;
+//	}
+//}
