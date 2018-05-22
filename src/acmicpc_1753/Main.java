@@ -8,94 +8,120 @@ import java.util.PriorityQueue;
 import java.util.StringTokenizer;
 
 public class Main {
-	static ArrayList<Edge> edges[];
-	static boolean visited[];
-	static DistanceInfo distance[];
-	static PriorityQueue<DistanceInfo> pq;
+	static BufferedReader br;
+	static StringTokenizer st;
 
 	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringTokenizer st = new StringTokenizer(br.readLine());
+		br = new BufferedReader(new InputStreamReader(System.in));
+		st = new StringTokenizer(br.readLine());
 		int V = Integer.parseInt(st.nextToken());
 		int E = Integer.parseInt(st.nextToken());
 		int K = Integer.parseInt(br.readLine());
 
-		visited = new boolean[V + 1];
-		edges = new ArrayList[V + 1];
-		for (int i = 0; i <= V; i++) {
-			edges[i] = new ArrayList<Edge>();
-		}
-
-		// init edges
+		Graph g = new Graph(V, E);
+		int u, v, w;
 		for (int i = 0; i < E; i++) {
 			st = new StringTokenizer(br.readLine());
-			int u = Integer.parseInt(st.nextToken());
-			int v = Integer.parseInt(st.nextToken());
-			int w = Integer.parseInt(st.nextToken());
-			edges[u].add(new Edge(u, v, w));
+			u = Integer.parseInt(st.nextToken());
+			v = Integer.parseInt(st.nextToken());
+			w = Integer.parseInt(st.nextToken());
+			g.addEdge(u, v, w);
 		}
+		g.dijkstra(K);
+		g.printDistance();
+	}
+}
 
-		// init data
-		distance = new DistanceInfo[V + 1];
-		for (int i = 0; i <= V; i++) {
-			distance[i] = new DistanceInfo(i, Integer.MAX_VALUE);
+class Graph {
+	int V, E;
+	Node[] nodes;
+
+	Graph(int V, int E) {
+		this.V = V;
+		this.E = E;
+		nodes = new Node[V + 1];
+		for (int i = 1; i <= V; i++) {
+			nodes[i] = new Node();
 		}
-		distance[K].value = 0;
-		
-		pq = new PriorityQueue<DistanceInfo>();
-		pq.offer(distance[K]);
-		
-		while (!pq.isEmpty()) {	
-			DistanceInfo target = pq.poll();;
-			int minNode = target.index;
-			visited[minNode] = true;
-			
-			Iterator it = edges[minNode].iterator();
-			while(it.hasNext()) {
-				Edge e = (Edge)it.next();
-				int updateDistance = distance[minNode].value + e.weight;
-				if (updateDistance >= 0 && distance[e.end].value > updateDistance) {
-					distance[e.end].value = updateDistance;
-					pq.offer(distance[e.end]);
+	}
+
+	void addEdge(int u, int v, int w) {
+		nodes[u].addEdge(new Edge(v, w));
+	}
+
+	void dijkstra(int start) {
+		nodes[start].distance = 0;
+
+		PriorityQueue<Node> q = new PriorityQueue<Node>();
+		q.offer(nodes[start]);
+
+		Node target;
+		int linked, d;
+		while (!q.isEmpty()) {
+			target = q.poll();
+
+			Iterator<Edge> it = target.edges.iterator();
+			while (it.hasNext()) {
+				Edge e = it.next();
+				linked = e.destination;
+
+				d = target.distance + e.cost;
+				if (nodes[linked].distance > d) {
+					if (d >= 0) {
+						nodes[linked].distance = d;
+						q.offer(nodes[linked]);
+					}
 				}
 			}
 		}
+	}
 
+	void printDistance() {
+		StringBuilder sb = new StringBuilder();
+		int d;
 		for (int i = 1; i <= V; i++) {
-			System.out.println((distance[i].value == Integer.MAX_VALUE) ? ("INF") : (distance[i].value));
+			d = nodes[i].distance;
+			if (d == Integer.MAX_VALUE) {
+				sb.append("INF\n");
+			} else {
+				sb.append(d + "\n");
+			}
 		}
+		System.out.println(sb);
+	}
+}
+
+class Node implements Comparable<Node> {
+	int distance;
+	ArrayList<Edge> edges;
+
+	Node() {
+		this.distance = Integer.MAX_VALUE;
+		edges = new ArrayList<Edge>();
+	}
+
+	void addEdge(Edge e) {
+		edges.add(e);
+	}
+
+	@Override
+	public int compareTo(Node n) {
+		if (this.distance < n.distance) {
+			return -1;
+		}
+		if (this.distance > n.distance) {
+			return 1;
+		}
+		return 0;
 	}
 }
 
 class Edge {
-	int start;
-	int end;
-	int weight;
+	int destination;
+	int cost;
 
-	public Edge(int start, int end, int weight) {
-		this.start = start;
-		this.end = end;
-		this.weight = weight;
-	}
-}
-
-class DistanceInfo implements Comparable<DistanceInfo> {
-	public int index;
-	public int value;
-	
-	public DistanceInfo (int index, int value) {
-		this.index = index;
-		this.value = value;
-	}
-
-	@Override
-	public int compareTo(DistanceInfo dist) {
-		if(this.value < dist.value) {
-			return -1;
-		}
-		else if (this.value > dist.value) {
-			return 1;			
-		}
-		return 0;
+	Edge(int destination, int cost) {
+		this.destination = destination;
+		this.cost = cost;
 	}
 }

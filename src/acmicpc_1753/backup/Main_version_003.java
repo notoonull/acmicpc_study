@@ -7,7 +7,7 @@
 //import java.util.PriorityQueue;
 //import java.util.StringTokenizer;
 //
-//public class Main_version_002 {
+//public class Main_version_003 {
 //	static ArrayList<Edge> edges[];
 //	static boolean visited[];
 //	static DistanceInfo distance[];
@@ -43,7 +43,7 @@
 //		distance[K].value = 0;
 //		
 //		pq = new PriorityQueue<DistanceInfo>();
-//		fillQueue(V);
+//		pq.offer(distance[K]);
 //		
 //		while (!pq.isEmpty()) {	
 //			DistanceInfo target = pq.poll();;
@@ -56,35 +56,28 @@
 //				int updateDistance = distance[minNode].value + e.weight;
 //				if (updateDistance >= 0 && distance[e.end].value > updateDistance) {
 //					distance[e.end].value = updateDistance;
+//					pq.offer(distance[e.end]);
 //				}
 //			}
-//			fillQueue(V);
 //		}
 //
 //		for (int i = 1; i <= V; i++) {
 //			System.out.println((distance[i].value == Integer.MAX_VALUE) ? ("INF") : (distance[i].value));
 //		}
 //	}
-//	
-//	public static void fillQueue(int V) {
-//		pq.clear();
-//		for (int i = 0; i <= V; i++) {
-//			if(!visited[i]) pq.offer(distance[i]);
-//		}
-//	}
 //}
 //
-////class Edge {
-////	int start;
-////	int end;
-////	int weight;
-////
-////	public Edge(int start, int end, int weight) {
-////		this.start = start;
-////		this.end = end;
-////		this.weight = weight;
-////	}
-////}
+//class Edge {
+//	int start;
+//	int end;
+//	int weight;
+//
+//	public Edge(int start, int end, int weight) {
+//		this.start = start;
+//		this.end = end;
+//		this.weight = weight;
+//	}
+//}
 //
 //class DistanceInfo implements Comparable<DistanceInfo> {
 //	public int index;
