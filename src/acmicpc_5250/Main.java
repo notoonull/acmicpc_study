@@ -9,7 +9,7 @@ import java.util.StringTokenizer;
 
 // timeout
 public class Main {
-	public static void main(String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {		
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		StringTokenizer st = new StringTokenizer(br.readLine());
 
@@ -46,8 +46,10 @@ class Graph {
 	Node[] nodes;
 	int[] path;
 	int phase;
-	int[] results;
-
+	Long[] results;
+	int[][] distance;
+	boolean[] visited;
+	
 	Graph(int n, int m, int a, int b) {
 		this.n = n;
 		this.m = m;
@@ -58,10 +60,13 @@ class Graph {
 			nodes[i] = new Node(i);
 		}
 		this.phase = 0;
+		distance = new int[n+1][n+1];
+		visited = new boolean[n+1];
 	}
 
 	void addEdge(int u, int v, int w) {
 		nodes[u].addEdge(v, w);
+		distance[u][v] = w;
 	}
 
 	void addPath(int[] path) {
@@ -69,20 +74,27 @@ class Graph {
 	}
 
 	void calculateResults() {
-		int k = this.path.length;
-		results = new int[k - 1];
-		for (int i = 0; i < k - 1; i++) {
-			this.phase = i;
-			dijkstra(a);
-			results[i] = nodes[b].distance;
+		int k = path.length;
+		results = new Long[k - 1];
+		Long path_length = 0L;
+		for (int i = 0; i < k - 1; i++) {			
+			phase = i;		
+			visited[path[i]] = true;
+			dijkstra(path[i]);
+			if (nodes[b].distance == Long.MAX_VALUE) {
+				results[i] = Long.MAX_VALUE;	
+			} else {
+				results[i] = path_length + nodes[b].distance;	
+			}
+			path_length += distance[path[i]][path[i+1]];
 		}
 	}
 
 	void printResults() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < this.results.length; i++) {
-			int result = this.results[i];
-			if (result == Integer.MAX_VALUE) {
+			Long result = this.results[i];
+			if (result == Long.MAX_VALUE) {
 				sb.append(-1 + "\n");
 			} else {
 				sb.append(result + "\n");
@@ -93,9 +105,9 @@ class Graph {
 
 	void dijkstra(int start) {
 		for (int i = 1; i <= n; i++) {
-			nodes[i].distance = Integer.MAX_VALUE;
+			nodes[i].distance = Long.MAX_VALUE;
 		}
-		nodes[start].distance = 0;
+		nodes[start].distance = 0L;
 
 		PriorityQueue<Node> q = new PriorityQueue<Node>();
 		q.offer(nodes[start]);
@@ -105,7 +117,7 @@ class Graph {
 			while (it.hasNext()) {
 				Edge e = it.next();
 				if (canGo(target.number, e.destination)) {
-					int d = target.distance + e.weight;
+					long d = target.distance + e.weight;
 					if (d >= 0 && nodes[e.destination].distance > d) {
 						nodes[e.destination].distance = d;
 						q.offer(nodes[e.destination]);
@@ -116,7 +128,10 @@ class Graph {
 	}
 
 	boolean canGo(int u, int v) {
-		if (this.path[this.phase] == u && this.path[this.phase + 1] == v) {
+		if (path[phase] == u && path[phase + 1] == v) {
+			return false;
+		}
+		if (visited[v]) {
 			return false;
 		}
 		return true;
@@ -126,11 +141,11 @@ class Graph {
 class Node implements Comparable<Node> {
 	ArrayList<Edge> edges;
 	int number;
-	int distance;
+	Long distance;
 
 	Node(int number) {
 		this.number = number;
-		this.distance = Integer.MAX_VALUE;
+		this.distance = Long.MAX_VALUE;
 		edges = new ArrayList<Edge>();
 	}
 
