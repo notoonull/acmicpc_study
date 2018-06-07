@@ -10,16 +10,18 @@ public class Main {
 
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < N; i++) {
+			sb.append(((i < 10) ? ("0" + i) : (i)) + " ");
+			
 			for (int j = 1; j < N - i; j++) {
 				sb.append(" ");
 			}
+			
 			if (i % 3 == 0) {
 				sb.append("*");
 
 				int quotient = (i / 3);
 				for (int j = 1; j <= quotient; j++) {
 					sb.append("     ");
-
 					sb.append("*");
 				}
 			}
@@ -29,7 +31,6 @@ public class Main {
 				int quotient = (i / 3);
 				for (int j = 1; j <= quotient; j++) {
 					sb.append("   ");
-
 					sb.append("* *");
 				}
 			}
@@ -39,7 +40,6 @@ public class Main {
 				int quotient = (i / 3);
 				for (int j = 1; j <= quotient; j++) {
 					sb.append(" ");
-
 					sb.append("*****");
 				}
 			}
