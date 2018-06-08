@@ -7,10 +7,9 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.Stack;
 import java.util.StringTokenizer;
 
-public class Main {
+public class Main5 {
 	static BufferedReader br;
 	static StringTokenizer st;
 	static int N;
@@ -18,7 +17,7 @@ public class Main {
 	static int V;
 	static ArrayList<ArrayList<Integer>> list;
 	static boolean[] visited;
-
+	
 	public static void main(String[] args) throws Exception {
 		br = new BufferedReader(new InputStreamReader(System.in));
 		st = new StringTokenizer(br.readLine());
@@ -52,50 +51,36 @@ public class Main {
 
 	static void dfs() {
 		visited = new boolean[N + 1];
-		Stack<Integer> stack = new Stack<Integer>();
-
-		visited[V] = true;
-		System.out.print(V + " ");
-		stack.push(V);
-
-		while (!stack.isEmpty()) {
-			int here = stack.peek();
-			
-			boolean hereChanged = false;
-			
-			Iterator<Integer> it = list.get(here).iterator();
-			while (it.hasNext()) {
-				int there = it.next();
-				if (!visited[there]) {
-					visited[there] = true;
-					System.out.print(there + " ");
-					stack.push(there);
-					hereChanged = true;
-					break;
-				}
+		_dfs(V);		
+	}
+	
+	static void _dfs(int here) {
+		visited[here] = true;
+		System.out.print(here + " ");
+		Iterator<Integer> it = list.get(here).iterator();
+		while(it.hasNext()) {
+			int there = it.next();
+			if (!visited[there]) {
+				_dfs(there);
 			}
-
-			if (!hereChanged)
-				stack.pop();
 		}
 	}
 
 	static void bfs() {
 		visited = new boolean[N + 1];
 		Queue<Integer> q = new LinkedList<Integer>();
-
-		visited[V] = true;
-		System.out.print(V + " ");
+		
+		visited[V] = true;		
 		q.offer(V);
 
 		while (!q.isEmpty()) {
 			int here = q.poll();			
+			System.out.print(here + " ");
 			Iterator<Integer> it = list.get(here).iterator();
-			while (it.hasNext()) {
+			while(it.hasNext()) {
 				int there = it.next();
 				if (!visited[there]) {
-					visited[there] = true;
-					System.out.print(there + " ");
+					visited[there] = true;					
 					q.offer(there);
 				}
 			}
