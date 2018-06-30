@@ -3,116 +3,83 @@ package acmicpc_11657;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.StringTokenizer;
 
 public class Main {
-	public static void main(String[] args) throws Exception {
-		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		int N, M;
-		int A, B, C;
+	static BufferedReader br;
+	static StringTokenizer st;
+	static int N, M;
+	static ArrayList<Edge> edges;
+	static int[] distance;
 
-		StringTokenizer st = new StringTokenizer(br.readLine());
+	public static void main(String[] args) throws Exception {
+		br = new BufferedReader(new InputStreamReader(System.in));
+
+		st = new StringTokenizer(br.readLine());
 		N = Integer.parseInt(st.nextToken());
 		M = Integer.parseInt(st.nextToken());
-		Graph g = new Graph(N, M);
+
+		distance = new int[N + 1];
+		Arrays.fill(distance, Integer.MAX_VALUE);
+		distance[1] = 0;
+		
+		edges = new ArrayList<Edge>();
+
 		for (int i = 0; i < M; i++) {
 			st = new StringTokenizer(br.readLine());
-			A = Integer.parseInt(st.nextToken());
-			B = Integer.parseInt(st.nextToken());
-			C = Integer.parseInt(st.nextToken());
-			g.addEdge(A, B, C);
+			int A = Integer.parseInt(st.nextToken());
+			int B = Integer.parseInt(st.nextToken());
+			int C = Integer.parseInt(st.nextToken());
+			edges.add(new Edge(A, B, C));
 		}
-		g.bellman_ford(1);
-		g.printResults();
-
-	}
-}
-
-class Graph {
-	int N, M;
-	Node[] nodes;
-	boolean hasCycle;
-
-	Graph(int N, int M) {
-		this.N = N;
-		this.M = M;
-		nodes = new Node[N + 1];
-		for (int i = 1; i <= N; i++) {
-			nodes[i] = new Node(i);
-		}
-	}
-
-	void addEdge(int u, int v, int w) {
-		nodes[u].addEdge(v, w);
-	}
-
-	void bellman_ford(int start) {
-		for (int i = 1; i <= N; i++) {
-			nodes[i].distance = Integer.MAX_VALUE;
-		}
-		nodes[start].distance = 0;
-		hasCycle = false;
 
 		boolean updated = false;
-		for (int k = 0; k < N; k++) {
+		for (int i = 0; i < N; i++) {
 			updated = false;
-			for (int i = 1; i <= N; i++) {
-				Iterator<Edge> it = nodes[i].edges.iterator();
-				while (it.hasNext()) {
-					Edge e = it.next();
-					if (nodes[i].distance != Integer.MAX_VALUE) {
-						if (nodes[e.v].distance > nodes[i].distance + e.w) {
-							nodes[e.v].distance = nodes[i].distance + e.w;
-							updated = true;
-						}
+			Iterator<Edge> it = edges.iterator();
+			while (it.hasNext()) {
+				Edge e = it.next();
+				int start = e.start;
+				int end = e.end;
+				int weight = e.weight;
+
+				if (distance[start] != Integer.MAX_VALUE) {
+					if (distance[end] > distance[start] + weight) {
+						distance[end] = distance[start] + weight;
+						updated = true;
 					}
 				}
 			}
+
 			if (!updated)
 				break;
 		}
-		hasCycle = updated;
-	}
 
-	void printResults() {
-		StringBuilder sb = new StringBuilder();
-		if (hasCycle) {
-			sb.append("-1\n");
+		if (updated) {
+			System.out.println(-1);
 		} else {
 			for (int i = 2; i <= N; i++) {
-				if (nodes[i].distance == Integer.MAX_VALUE) {
-					sb.append("-1\n");
+				if (distance[i] == Integer.MAX_VALUE) {
+					System.out.println(-1);
 				} else {
-					sb.append(nodes[i].distance + "\n");
+					System.out.println(distance[i]);
 				}
 			}
 		}
-		System.out.println(sb.toString());
-	}
-}
 
-class Node {
-	int number;
-	ArrayList<Edge> edges;
-	int distance;
-
-	Node(int number) {
-		this.number = number;
-		this.distance = Integer.MAX_VALUE;
-		edges = new ArrayList<Edge>();
 	}
 
-	void addEdge(int v, int w) {
-		edges.add(new Edge(v, w));
-	}
-}
+	static class Edge {
+		int start;
+		int end;
+		int weight;
 
-class Edge {
-	int v, w;
-
-	Edge(int v, int w) {
-		this.v = v;
-		this.w = w;
+		Edge(int start, int end, int weight) {
+			this.start = start;
+			this.end = end;
+			this.weight = weight;
+		}
 	}
 }
